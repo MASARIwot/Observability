@@ -24,7 +24,7 @@ exporters:
   logging:
     loglevel: debug
 
-connectors:
+connectors: # TODO DROP IT 
   spanmetrics:
     exemplars:
       enabled: true

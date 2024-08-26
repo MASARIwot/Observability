@@ -21,6 +21,7 @@ from opentelemetry.sdk.metrics import MeterProvider
 from opentelemetry.exporter.otlp.proto.grpc.metric_exporter import OTLPMetricExporter
 from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader
 
+from opentelemetry.trace import Status, StatusCode
 
 def configure_opentelemetry(app):
     # Set the global propagator to TraceContextTextMapPropagator
@@ -31,7 +32,18 @@ def configure_opentelemetry(app):
         span.update_name(request.endpoint or request.url_rule.rule)
         span.set_attribute(
             "correlation", str(uuid.uuid4())
-        )  # Get correlation from global of from request header
+        )  # Get correlation from global of from request hea
+
+    def _flask_response_hook(span: Span, status, response_headers):
+        print(type(status))
+        print(status)
+        print(response_headers)
+        # span.set_status(StatusCode.OK)
+        span.set_status(Status(StatusCode.ERROR))
+        print(span.status)
+        print(span.status.status_code)
+        # We need it globally 
+        # record_exception
 
     def _requests_hook(span: Span, request: PreparedRequest):
         span.update_name(
@@ -55,7 +67,7 @@ def configure_opentelemetry(app):
     batch_span_processor = BatchSpanProcessor(main_exporter)
     trace.get_tracer_provider().add_span_processor(batch_span_processor)
 
-    # # Configure OpenTelemetry metrics
+    # Configure OpenTelemetry metrics
     # metrics_exporter = OTLPMetricExporter(endpoint="http://localhost:4317", insecure=True)
     # metric_reader = PeriodicExportingMetricReader(exporter=metrics_exporter, export_interval_millis=1000)
     # meter_provider=MeterProvider(resource=resource, metric_readers=[metric_reader])
@@ -68,9 +80,45 @@ def configure_opentelemetry(app):
 
     # Automatically instrument the Flask app
     FlaskInstrumentor().instrument_app(
-        app, excluded_urls="/api-spec,/doc", request_hook=_flask_request_hook
+        app, excluded_urls="/api-spec,/doc", request_hook=_flask_request_hook, response_hook=_flask_response_hook
     )
 
     # Automatically instrument the requests library, will add Traceparent to all request
     RequestsInstrumentor().instrument(request_hook=_requests_hook)
 
+
+
+#  TODO 
+#     # Create a meter
+#     meter = metrics.get_meter(__name__)
+
+#     # Example: Create and record a counter metric. or dome other 
+#     request_counter = meter.create_counter(
+#         name="http_requests_total",
+#         description="Total number of HTTP requests",
+#         unit="1",
+#     )
+
+#     # Function to record metrics
+#     def record_request_metrics():
+#         request_counter.add(1, {"service.name": "tracer"})
+
+# from opentelemetry.sdk.trace import SpanProcessor, ReadableSpan
+# from opentelemetry.trace import Status, StatusCode
+
+# class AutomaticStatusSpanProcessor(SpanProcessor):
+#     def on_end(self, span: ReadableSpan) -> None:
+#         # Automatically set status based on the span's end state
+#         if span.status.status_code == StatusCode.UNSET:
+#             if span.attributes.get("http.status_code"):
+#                 status_code = span.attributes["http.status_code"]
+#                 if 200 <= status_code < 400:
+#                     span.set_status(Status(StatusCode.OK))
+#                 else:
+#                     span.set_status(Status(StatusCode.ERROR))
+#             else:
+#                 # Set to OK if no error occurred and status was not set
+#                 span.set_status(Status(StatusCode.OK))
+
+# # Add the custom span processor to the TracerProvider
+# trace.get_tracer_provider().add_span_processor(AutomaticStatusSpanProcessor())
