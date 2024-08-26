@@ -24,4 +24,4 @@ def propagate():
 
 @NS_TEST.route("/error",  endpoint='api-error')
 def error():
-    abort(400, message="This is a bad request")
+    return "This is a bad request", 400
