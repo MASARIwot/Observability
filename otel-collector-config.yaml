@@ -32,6 +32,10 @@ service:
       receivers: [otlp]
       exporters: [debug]
 
+# I need a docker-compose.yml that will have  jaegertracing/all-in-one ,  prom/prometheus and otel/opentelemetry-collecto
+# where opentelemetry-collecto collect traces and send it to jaeger, metrics to prometheus and jaeger read metrics from prometheus
+# also I will need config files for all of them
+# thank you
 # receivers:
 #   otlp:
 #     protocols:
@@ -59,4 +63,40 @@ service:
 #       exporters: [otlp]
 #     metrics:
 #       receivers: [otlp]
+#       exporters: [prometheus]
+# receivers:
+#   otlp:
+#     protocols:
+#       grpc:
+#       http:
+
+#   jaeger:
+#     protocols:
+#       thrift_http:
+#         endpoint: "0.0.0.0:14278"
+
+# process:
+#   batch:
+
+# exporters:
+#   prometheus:
+#     endpoint: "0.0.0.0:8889"
+
+#   jaeger:
+#     endpoint: "10.20.78.142:14250"
+#     tls:
+#       insecure: true
+
+# connectors:
+#   spanmetrics:
+
+# service:
+#   pipeline:
+#     traces:
+#       receivers: [otlp, jaeger]
+#       processors: [batch]
+#       exporters: [spanmetrics, jaeger]
+
+#     metrics/spanmetrics:
+#       receivers: [spanmetrics]
 #       exporters: [prometheus]

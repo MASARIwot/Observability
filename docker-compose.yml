@@ -12,6 +12,7 @@ services:
       - "4317:4317" # Expose the gRPC receiver port for the collector
     depends_on:
       - jaeger
+      - prometheus
 
   jaeger:
     image: jaegertracing/all-in-one:latest
@@ -22,9 +23,11 @@ services:
     command: --query.ui-config /etc/jaeger/jaeger-ui.json
     environment:
       - METRICS_STORAGE_TYPE=prometheus
+      - COLLECTOR_ZIPKIN_HTTP_PORT=9411
       - PROMETHEUS_SERVER_URL=http://prometheus:9090
-      - COLLECTOR_OTLP_ENABLED=true
       - PROMETHEUS_QUERY_SUPPORT_SPANMETRICS_CONNECTOR=true
+      #- PROMETHEUS_QUERY_NAMESPACE=span_metrics
+      #- PROMETHEUS_QUERY_DURATION_UNIT=s
       - PROMETHEUS_QUERY_NORMALIZE_CALLS=true
       - PROMETHEUS_QUERY_NORMALIZE_DURATION=true
       - LOG_LEVEL=debug
@@ -41,8 +44,6 @@ services:
       - prometheus_data:/prometheus # Volume for storing Prometheus data persistently.
       - ./prometheus.yml:/etc/prometheus/prometheus.yml # Mount the Prometheus configuration file.
     command: [ "--config.file=/etc/prometheus/prometheus.yml", '--log.level=debug']
-    depends_on:
-      - optl-collector
 
 volumes:
   prometheus_data: # Named volume to persist Prometheus data across container restarts.
