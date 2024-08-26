@@ -1,0 +1,60 @@
+version: '3'  # Specifies the Docker Compose file format version.
+
+services:
+
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:latest
+    command: ["--config=/etc/otel-collector-config.yaml"]
+    volumes:
+      - ./otel-collector-config.yaml:/etc/otel-collector-config.yaml
+    ports:
+      - "4317:4317" # OTLP gRPC receiver
+    networks:
+      - observability
+
+  jaeger:
+    image: jaegertracing/all-in-one:latest  # The Docker image for Jaeger, a distributed tracing system.
+    container_name: jaeger  # Name for the container instance.
+    environment:
+      - COLLECTOR_ZIPKIN_HTTP_PORT=9411  # Exposes Zipkin-compatible HTTP endpoint on port 9411.
+      - METRICS_STORAGE_TYPE=prometheus
+      - PROMETHEUS_SERVER_URL=http://prometheus:9090
+      - PROMETHEUS_QUERY_SUPPORT_SPANMETRICS_CONNECTOR=true
+      - PROMETHEUS_QUERY_NORMALIZE_CALLS=true
+      - PROMETHEUS_QUERY_NORMALIZE_DURATION=true
+      # - PROMETHEUS_SERVER_URL=http://localhost:9090
+    ports:
+      - "5775:5775/udp"  # Jaeger agent port for receiving data (UDP).
+      - "6831:6831/udp"  # Jaeger agent port for receiving data (UDP).
+      - "6832:6832/udp"  # Jaeger agent port for receiving data (UDP).
+      - "5778:5778"  # Jaeger UI port for administrative functions.
+      - "16686:16686"  # Jaeger UI port for accessing the web interface.
+      - "14268:14268"  # Jaeger collector port for receiving traces.
+      - "14250:14250"  # Jaeger gRPC port for receiving traces, needed for prometheus.
+      - "9411:9411"  # Zipkin HTTP port for receiving traces.
+    # command:
+    #   - -prometheus.query.support-spanmetrics-connector=true
+    networks:
+      - observability
+
+  prometheus:
+    image: prom/prometheus:latest  # The Docker image for Prometheus, a monitoring and alerting toolkit.
+    container_name: prometheus  # Name for the container instance.
+    ports:
+      - "9090:9090"  # Port for accessing Prometheus web interface.
+    volumes:
+      - prometheus_data:/prometheus  # Volume for storing Prometheus data persistently.
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml  # Mount the Prometheus configuration file.
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - "--storage.tsdb.retention.time=30d"  # Retain data for 30 days.
+      - "--storage.tsdb.retention.size=1GB"  # Limit data storage size to 50GB.
+    networks:
+      - observability
+
+volumes:
+  prometheus_data:
+    # Named volume to persist Prometheus data across container restarts.
+
+networks:
+  observability:
