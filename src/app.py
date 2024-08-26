@@ -28,6 +28,7 @@ def create_app():
     print(app.url_map)
     return app
 
+# app = create_app()
 
 def main():
     # Check for command-line argument for port
@@ -42,4 +43,4 @@ def main():
 
 if __name__ == "__main__":
     # Run the Flask app
-    create_app().run(debug=True, use_reloader=True)
+    main()

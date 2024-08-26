@@ -2,17 +2,24 @@ receivers:
   otlp:
     protocols:
       grpc:
-        endpoint: 0.0.0.0:14250
-processors:
-extensions:
-  health_check: {}
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+
+
 exporters:
+  debug:
+    verbosity: detailed
+    sampling_initial: 5
+    sampling_thereafter: 200
+
   otlp:
-    endpoint: jaeger:14250
+    endpoint: "jaeger:4317"
     tls:
       insecure: true
   prometheus:
-    endpoint: "0.0.0.0:9090"
+    endpoint: "0.0.0.0:9464"
+
 service:
   pipelines:
     traces:
@@ -21,3 +28,35 @@ service:
     metrics:
       receivers: [otlp]
       exporters: [prometheus]
+    logs:
+      receivers: [otlp]
+      exporters: [debug]
+
+# receivers:
+#   otlp:
+#     protocols:
+#         grpc:
+#         http:
+# # receivers:
+# #   otlp:
+# #     protocols:
+# #       grpc:
+# #       http:
+# processors:
+# extensions:
+#   health_check: {}
+# exporters:
+#   otlp:
+#     endpoint: jaeger:14250
+#     tls:
+#       insecure: true
+#   prometheus:
+#     endpoint: "0.0.0.0:9090"
+# service:
+#   pipelines:
+#     traces:
+#       receivers: [otlp]
+#       exporters: [otlp]
+#     metrics:
+#       receivers: [otlp]
+#       exporters: [prometheus]

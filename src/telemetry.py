@@ -9,12 +9,15 @@ from opentelemetry.sdk.trace.export import (
     ConsoleSpanExporter,
 )
 from opentelemetry.sdk.resources import SERVICE_NAME, Resource
-from opentelemetry.exporter.jaeger.thrift import JaegerExporter
+
+# from opentelemetry.exporter.jaeger.thrift import JaegerExporter
 from opentelemetry.propagate import set_global_textmap
 from opentelemetry.trace.propagation.tracecontext import TraceContextTextMapPropagator
 from requests import PreparedRequest
 import uuid
-from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
+from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
+# from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
+
 
 
 def configure_opentelemetry(app):
@@ -29,20 +32,24 @@ def configure_opentelemetry(app):
         )  # Get correlation from global of from request header
 
     def _requests_hook(span: Span, request: PreparedRequest):
-        span.update_name('requests:' + request.method + ":" + request.path_url.split("?")[0])
-        span.set_attribute("correlation", str(uuid.uuid4())) # Get correlation from global of from request header
+        span.update_name(
+            "requests:" + request.method + ":" + request.path_url.split("?")[0]
+        )
+        span.set_attribute(
+            "correlation", str(uuid.uuid4())
+        )  # Get correlation from global of from request header
 
     set_global_textmap(TraceContextTextMapPropagator())
 
     # OpenTelemetry Configuration
-    trace.set_tracer_provider(TracerProvider(resource=Resource.create({SERVICE_NAME: "tracer"})))
+    trace.set_tracer_provider(
+        TracerProvider(resource=Resource.create({SERVICE_NAME: "tracer"}))
+    )
     tracer = trace.get_tracer(__name__)
 
     # Configure OpenTelemetry to export traces to an OTLP collector
-    main_exporter = OTLPSpanExporter(
-        agent_host_name="localhost",  # Replace with your Jaeger host
-        agent_port=4317,  # Default Jaeger port
-    )
+    main_exporter = OTLPSpanExporter(endpoint="http://localhost:4317", insecure=True)
+    # main_exporter = OTLPSpanExporter(endpoint="http://localhost:4318")
     batch_span_processor = BatchSpanProcessor(main_exporter)
     trace.get_tracer_provider().add_span_processor(batch_span_processor)
 
