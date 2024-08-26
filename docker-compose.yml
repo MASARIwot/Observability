@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   optl-collector:
-    image: otel/opentelemetry-collector:latest
+    image: otel/opentelemetry-collector-contrib:latest
     networks:
       observability:
         aliases: [ "optl-collector" ]
@@ -30,6 +30,7 @@ services:
       #- PROMETHEUS_QUERY_DURATION_UNIT=s
       - PROMETHEUS_QUERY_NORMALIZE_CALLS=true
       - PROMETHEUS_QUERY_NORMALIZE_DURATION=true
+
       - LOG_LEVEL=debug
     ports:
       - "5775:5775/udp" # Jaeger agent port for receiving data (UDP).
