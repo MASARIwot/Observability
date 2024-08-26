@@ -55,11 +55,11 @@ def configure_opentelemetry(app):
     batch_span_processor = BatchSpanProcessor(main_exporter)
     trace.get_tracer_provider().add_span_processor(batch_span_processor)
 
-    # Configure OpenTelemetry metrics
-    metrics_exporter = OTLPMetricExporter(endpoint="http://localhost:4317", insecure=True)
-    metric_reader = PeriodicExportingMetricReader(exporter=metrics_exporter, export_interval_millis=1000)
-    meter_provider=MeterProvider(resource=resource, metric_readers=[metric_reader])
-    metrics.set_meter_provider(meter_provider)
+    # # Configure OpenTelemetry metrics
+    # metrics_exporter = OTLPMetricExporter(endpoint="http://localhost:4317", insecure=True)
+    # metric_reader = PeriodicExportingMetricReader(exporter=metrics_exporter, export_interval_millis=1000)
+    # meter_provider=MeterProvider(resource=resource, metric_readers=[metric_reader])
+    # metrics.set_meter_provider(meter_provider)
 
     # Add a SimpleSpanProcessor with a ConsoleSpanExporter to log spans to the console
     console_exporter = ConsoleSpanExporter()

@@ -6,6 +6,8 @@ receivers:
       http:
         endpoint: 0.0.0.0:4318
 
+processors:
+  batch:
 
 exporters:
   debug:
@@ -24,9 +26,11 @@ service:
   pipelines:
     traces:
       receivers: [otlp]
+      processors: [batch]
       exporters: [otlp]
     metrics:
       receivers: [otlp]
+      processors: [batch]
       exporters: [prometheus]
     logs:
       receivers: [otlp]
@@ -36,67 +40,3 @@ service:
 # where opentelemetry-collecto collect traces and send it to jaeger, metrics to prometheus and jaeger read metrics from prometheus
 # also I will need config files for all of them
 # thank you
-# receivers:
-#   otlp:
-#     protocols:
-#         grpc:
-#         http:
-# # receivers:
-# #   otlp:
-# #     protocols:
-# #       grpc:
-# #       http:
-# processors:
-# extensions:
-#   health_check: {}
-# exporters:
-#   otlp:
-#     endpoint: jaeger:14250
-#     tls:
-#       insecure: true
-#   prometheus:
-#     endpoint: "0.0.0.0:9090"
-# service:
-#   pipelines:
-#     traces:
-#       receivers: [otlp]
-#       exporters: [otlp]
-#     metrics:
-#       receivers: [otlp]
-#       exporters: [prometheus]
-# receivers:
-#   otlp:
-#     protocols:
-#       grpc:
-#       http:
-
-#   jaeger:
-#     protocols:
-#       thrift_http:
-#         endpoint: "0.0.0.0:14278"
-
-# process:
-#   batch:
-
-# exporters:
-#   prometheus:
-#     endpoint: "0.0.0.0:8889"
-
-#   jaeger:
-#     endpoint: "10.20.78.142:14250"
-#     tls:
-#       insecure: true
-
-# connectors:
-#   spanmetrics:
-
-# service:
-#   pipeline:
-#     traces:
-#       receivers: [otlp, jaeger]
-#       processors: [batch]
-#       exporters: [spanmetrics, jaeger]
-
-#     metrics/spanmetrics:
-#       receivers: [spanmetrics]
-#       exporters: [prometheus]
