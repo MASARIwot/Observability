@@ -25,9 +25,9 @@ deprecated==1.2.14
 flask==3.0.3
     # via
     #   flask-smorest
-    #   flask_opentelemetry_app (setup.py)
+    #   tracer (setup.py)
 flask-smorest==0.44.0
-    # via flask_opentelemetry_app (setup.py)
+    # via tracer (setup.py)
 googleapis-common-protos==1.63.2
     # via
     #   opentelemetry-exporter-jaeger-proto-grpc
@@ -58,7 +58,6 @@ marshmallow==3.22.0
     #   webargs
 opentelemetry-api==1.26.0
     # via
-    #   flask_opentelemetry_app (setup.py)
     #   opentelemetry-exporter-jaeger-proto-grpc
     #   opentelemetry-exporter-jaeger-thrift
     #   opentelemetry-exporter-otlp-proto-grpc
@@ -66,17 +65,20 @@ opentelemetry-api==1.26.0
     #   opentelemetry-instrumentation
     #   opentelemetry-instrumentation-flask
     #   opentelemetry-instrumentation-requests
+    #   opentelemetry-instrumentation-system-metrics
+    #   opentelemetry-instrumentation-urllib3
     #   opentelemetry-instrumentation-wsgi
     #   opentelemetry-sdk
     #   opentelemetry-semantic-conventions
+    #   tracer (setup.py)
 opentelemetry-exporter-jaeger==1.11.1
-    # via flask_opentelemetry_app (setup.py)
+    # via tracer (setup.py)
 opentelemetry-exporter-jaeger-proto-grpc==1.11.1
     # via opentelemetry-exporter-jaeger
 opentelemetry-exporter-jaeger-thrift==1.11.1
     # via opentelemetry-exporter-jaeger
 opentelemetry-exporter-otlp==1.26.0
-    # via flask_opentelemetry_app (setup.py)
+    # via tracer (setup.py)
 opentelemetry-exporter-otlp-proto-common==1.26.0
     # via
     #   opentelemetry-exporter-otlp-proto-grpc
@@ -89,11 +91,17 @@ opentelemetry-instrumentation==0.47b0
     # via
     #   opentelemetry-instrumentation-flask
     #   opentelemetry-instrumentation-requests
+    #   opentelemetry-instrumentation-system-metrics
+    #   opentelemetry-instrumentation-urllib3
     #   opentelemetry-instrumentation-wsgi
 opentelemetry-instrumentation-flask==0.47b0
-    # via flask_opentelemetry_app (setup.py)
+    # via tracer (setup.py)
 opentelemetry-instrumentation-requests==0.47b0
-    # via flask_opentelemetry_app (setup.py)
+    # via tracer (setup.py)
+opentelemetry-instrumentation-system-metrics==0.47b0
+    # via tracer (setup.py)
+opentelemetry-instrumentation-urllib3==0.47b0
+    # via tracer (setup.py)
 opentelemetry-instrumentation-wsgi==0.47b0
     # via opentelemetry-instrumentation-flask
 opentelemetry-proto==1.26.0
@@ -103,21 +111,23 @@ opentelemetry-proto==1.26.0
     #   opentelemetry-exporter-otlp-proto-http
 opentelemetry-sdk==1.26.0
     # via
-    #   flask_opentelemetry_app (setup.py)
     #   opentelemetry-exporter-jaeger-proto-grpc
     #   opentelemetry-exporter-jaeger-thrift
     #   opentelemetry-exporter-otlp-proto-grpc
     #   opentelemetry-exporter-otlp-proto-http
+    #   tracer (setup.py)
 opentelemetry-semantic-conventions==0.47b0
     # via
     #   opentelemetry-instrumentation-flask
     #   opentelemetry-instrumentation-requests
+    #   opentelemetry-instrumentation-urllib3
     #   opentelemetry-instrumentation-wsgi
     #   opentelemetry-sdk
 opentelemetry-util-http==0.47b0
     # via
     #   opentelemetry-instrumentation-flask
     #   opentelemetry-instrumentation-requests
+    #   opentelemetry-instrumentation-urllib3
     #   opentelemetry-instrumentation-wsgi
 packaging==24.1
     # via
@@ -129,6 +139,8 @@ protobuf==4.25.4
     # via
     #   googleapis-common-protos
     #   opentelemetry-proto
+psutil==6.0.0
+    # via opentelemetry-instrumentation-system-metrics
 requests==2.32.3
     # via opentelemetry-exporter-otlp-proto-http
 six==1.16.0
@@ -149,6 +161,7 @@ wrapt==1.16.0
     # via
     #   deprecated
     #   opentelemetry-instrumentation
+    #   opentelemetry-instrumentation-urllib3
 zipp==3.20.0
     # via importlib-metadata
 

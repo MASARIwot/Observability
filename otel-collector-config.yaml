@@ -35,13 +35,21 @@ service:
       receivers: [otlp]
       processors: [batch]
       exporters: [spanmetrics, otlp]
+    # metrics:
+    #   receivers: [otlp]
+    #   processors: [batch]
+    #   exporters: [logging, prometheus]
     metrics:
-      receivers: [spanmetrics, otlp]
-      processors: [batch]
-      exporters: [logging, prometheus]
-    logs:
       receivers: [otlp]
-      exporters: [debug]
+      exporters: [prometheus]
+    # The metrics pipeline receives generated span metrics from 'spanmetrics' connector
+    # and pushes to Prometheus exporter, which makes them available for scraping on :9464.
+    metrics/spanmetrics:
+      receivers: [spanmetrics]
+      exporters: [prometheus]
+    # logs:
+    #   receivers: [otlp]
+    #   exporters: [debug]
 
 # I need a docker-compose.yml that will have  jaegertracing/all-in-one ,  prom/prometheus and otel/opentelemetry-collecto
 # where opentelemetry-collecto collect traces and send it to jaeger, metrics to prometheus and jaeger read metrics from prometheus

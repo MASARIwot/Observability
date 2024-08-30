@@ -15,6 +15,8 @@ setup(
         "opentelemetry-sdk",
         "opentelemetry-instrumentation-flask",
         "opentelemetry-instrumentation-requests",
+        "opentelemetry-instrumentation-system-metrics",
+        "opentelemetry-instrumentation-urllib3",
         "opentelemetry-exporter-otlp",
         "opentelemetry-exporter-jaeger", # TODO DROP IT
         # "opentelemetry-exporter-prometheus", # TODO
